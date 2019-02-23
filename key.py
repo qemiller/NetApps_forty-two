@@ -1,0 +1,1 @@
+fernet_key = 'uIIbQOtfHi-Lv66s7UHhexx6Zs-oZRuhtjEQy6W0Egc='
