@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import key  # separate file containing a key I generated with fernet
 import socket
 import sys
