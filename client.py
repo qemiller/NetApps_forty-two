@@ -15,7 +15,7 @@ def decode(im):
     decodedObjects = pyzbar.decode(im)
 
     #Print results
-    for obj in ecodedObjects:
+    for obj in decodedObjects:
         print('Type: ', obj.type)
         print('Data: ', obj.data,'\n')
     
