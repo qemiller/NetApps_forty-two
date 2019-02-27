@@ -23,10 +23,10 @@ def decode(im):
     return decodedObjects
 
 # get socket setup to contact server (from echo_client_exception.py class example)
-host = '172.30.87.17' # server pi's (Rocky's) IP address.
-port = 50000
-size = 1024
-s = None
+host = sys.argv[2] #server pi's (Rocky's) IP address.
+print(host)
+port = sys.argv[4] #server port
+size = sys.argv[6] #server size
 
 try:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
