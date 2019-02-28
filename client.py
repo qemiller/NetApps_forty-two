@@ -49,7 +49,8 @@ size = sys.argv[6] #server size
 
 try:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host, port))
+    s.bind((host, port))
+    s.connect((host,port))
     print("[Checkpoint 01] Connecting to ", host, "on port ", port)
 # except socket.error, (value,message):
 except socket.error as message:
@@ -96,7 +97,7 @@ if checkSum != tupans[1]:
 answer_text = cipher_suite.decrypt(tupans[0])
 print('[Checkpoint 07] Decrypt: Using Key: ', key.fernet_key, 'Plain text: ', answer_text)
 # read out answer
-print('[Speaking Answer: ', answer_text)
+print('[Checkpoint 08] Speaking Answer: ', answer_text)
 read_out_text(answer_text)
 
 s.close()   # might not want to close this here. Only close after client is done running.
