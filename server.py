@@ -50,12 +50,12 @@ while True:
 
     #wolframalpha	 
     print("[Checkpoint 07] Sending question to Wolframalpha: ",question)
-    wolf = wolframallpha.Client(apikeys.wolframID)
+    wolf = wolframalpha.Client(apikeys.wolframID)
     res = wolf.query(question)  #sent the question
     ans = next(res.results).text  #get the anwer
     print("[Checkpoint 08] Received answer from Wolframalpha: ",ans)
     encAns = f.encrypt(ans)
-    print("[Checkpoint 09] Encrypt: Key: ", key," | Ciphertext: ", encAns)
+    print("[Checkpoint 09] Encrypt: Key: ", data[1]," | Ciphertext: ", encAns)
     checkSumAns = hashlib.md5(encAns)
     print("[Checkpoint 10] Generated MD5 Checksum: ",checkSumAns)
     packet = (encAns, checkSumAns)
