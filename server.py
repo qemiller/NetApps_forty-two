@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import socket
 import wolframapha   # pip install wolframalpha
-
+import sys
 from watson_developer_cloud import TextToSpeechV1
-#from cryptography.fernet import Fernet #must 'pip install cryptography' to have this library
+from cryptography.fernet import Fernet #must 'pip install cryptography' to have this library
 import pyaudio #pip3 install pyaudio (cannot get working on my windows machine at the moment)
 import wave
+import pickle
+import hashlib
 
 def read_out_question(decrypted_question):
     text_to_speech = TextToSpeechV1(
@@ -48,19 +50,30 @@ def read_out_question(decrypted_question):
     p.terminate()
     # end example from stackoverflow user: zhangyangyu question: 17657103
 
-s= socket.socket()#create a socket
+s= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)#create a socket
 ID="5EK7K3-23TAQGG2UJ"
-port= 50000 #defin the port on which you went to connect
-
-s.bind(('', port))
-
-s.listen(5) #listening mode
+port= str(sys.argv[2]) #defin the port on which you went to connect
+size = sys.argv[4]
+ip_address = socket.gethostbyname(socket.gethostname())
+s.bind((ip_adress , port))
+print("[Checkpoint 01]Created socket at ",ip_address," on port ",port)
+s.listen(1) #listening mode
+print("[Checkpoint 02] Listening for client connections")
 
 while True:
     client, address=s.accept()
-    print ('get connection form', address)
+    print ("[Checkpoint 03] Accepted client connection from ",address," on port ",port)
     readIN= client.recv(1024)
-    print  (b'Receiced: '+ readIN )
+    data = pickle.loads(readIN)
+    print  ("[Checkpoint 04] Received data ",data)
+    checkSum = hashlib.md5(data[1])
+    if checksum != data[2]:
+        client.send(b'checksum incorrect')
+    f = Fernet(data[0])
+    question = f.decrypt(data[1])
+    print ("[Checkpoint 05] Decrypt: Key: ",data[0]," | Plain text: ",question)
+
+
 """
     #wolframalpha	 
     question= wolframallpha.Client(ID)
@@ -79,5 +92,4 @@ while True:
         # answer can be text and we may have client use
         # IBM Watson to convert this to audio file and play it
 
-        client.send(b'Thank you come agin')
     client.close()
