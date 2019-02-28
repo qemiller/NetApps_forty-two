@@ -7,6 +7,8 @@ import pyzbar.pyzbar as pyzbar
 import cv2
 from picamera import PiCamera
 from time import sleep
+import hashlib
+import pickle
 
 def decode(im):
     #This section taken from learnopencv.com 
@@ -54,8 +56,11 @@ print("[Checkpoint 03] New Question: " + code[0].data.decode("utf-8"))
 # here we take string from QR code and encrypt it
 cipher_suite = Fernet(key.fernet_key)
 cipher_text = cipher_suite.encrypt(b"this will be from the QR Code instead of a literal string")
-# send encrypted QR text to server via socket
-s.send(cipher_text)
+checksum = hashlib.md5(cipher_text)
+# send encrypted QR text to server via socket as a tuple with the (key, question, hash)
+tup = (key, cipher_text, checksum)
+pickled_tup = pickle.dump(tup)
+s.send(pickled_tup)
 answer = s.recv(size)
 s.close()   # might not want to close this here. Only close after client is done running.
 print('[Checkpoint 04] Encrypt: Generated Key: ', key.fernet_key," Cipher Text: ", cipher_text)
