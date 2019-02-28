@@ -9,6 +9,23 @@ from picamera import PiCamera
 from time import sleep
 import hashlib
 import pickle
+import os
+from watson_developer_cloud import TextToSpeechV1
+import apikeys
+
+def read_out_text(text):
+    text_to_speech = TextToSpeechV1(
+        iam_apikey=apikeys.iam_apikey,
+        url=apikeys.url
+    )
+    with open('text.wav', 'wb') as audio_file:
+        audio_file.write(
+            text_to_speech.synthesize(
+                text,
+                'audio/wav',
+                'en-US_AllisonVoice'
+            ).get_result().content)
+    os.system("start text.wav")  # only way i can get it to play the audio -caleb
 
 def decode(im):
     #This section taken from learnopencv.com 
@@ -60,11 +77,25 @@ checksum = hashlib.md5(cipher_text)
 # send encrypted QR text to server via socket as a tuple with the (key, question, hash)
 tup = (key, cipher_text, checksum)
 pickled_tup = pickle.dump(tup)
-s.send(pickled_tup)
-answer = s.recv(size)
-s.close()   # might not want to close this here. Only close after client is done running.
 print('[Checkpoint 04] Encrypt: Generated Key: ', key.fernet_key," Cipher Text: ", cipher_text)
+print('[Checkpoint 05] Sending data ', tup) # print out the non-pickled version? makes more sense
+s.send(pickled_tup)
+received_pickle = s.recv(size)
+# de-pickle the payload
+tupans = pickle.loads(received_pickle)
+print('[Checkpoint 06] Receiving data: ', received_pickle) # print out received tuple, after un-pickling
 
-print('Answer:', answer)
+# check payload fidelity
+checkSum = hashlib.md5(tupans[0])
+if checkSum != tupans[1]:
+    print("checksum incorrect")
 
+# decrypt answer
+answer_text = cipher_suite.decrypt(tupans[0])
+print('[Checkpoint 07] Decrypt: Using Key: ', key.fernet_key, 'Plain text: ', answer_text)
+# read out answer
+print('[Speaking Answer: ', answer_text)
+read_out_text(answer_text)
+
+s.close()   # might not want to close this here. Only close after client is done running.
 
