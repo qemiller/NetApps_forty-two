@@ -60,27 +60,29 @@ except socket.error as message:
 
 # todo decrypt qr code. This will need some soft of looped state until camera has received a valid QR input
 print("[Checkpoint 02] Listening for QR codes from RPi Camera that contain questions.")
+
 camera = PiCamera()
 camera.start_preview(fullscreen=False, window=(100,100,256,192))
 sleep(5)
 camera.capture('/home/pi/Documents/NetApps_forty-two/qr_code.jpg')
 camera.stop_preview()
+camera.close()
 
 im = cv2.imread('qr_code.jpg')
 code = decode(im)
 print("[Checkpoint 03] New Question: " + code[0].data.decode("utf-8"))
 
 # here we take string from QR code and encrypt it
-cipher_suite = Fernet(key.fernet_key)
-cipher_text = cipher_suite.encrypt(b"this will be from the QR Code instead of a literal string")
-checksum = hashlib.md5(cipher_text)
+cipher_suite = (Fernet(key.fernet_key))
+cipher_text = cipher_suite.encrypt((code[0].data))
+checksum = str(hashlib.md5(cipher_text))
 # send encrypted QR text to server via socket as a tuple with the (key, question, hash)
-tup = (key, cipher_text, checksum)
-pickled_tup = pickle.dump(tup)
+tup = (str(key.fernet_key), cipher_text, str(checksum))
+pickled_tup = pickle.dumps(tup)
 print('[Checkpoint 04] Encrypt: Generated Key: ', key.fernet_key," Cipher Text: ", cipher_text)
 print('[Checkpoint 05] Sending data ', tup) # print out the non-pickled version? makes more sense
 s.send(pickled_tup)
-received_pickle = s.recv(size)
+received_pickle = s.recv(int(size))
 # de-pickle the payload
 tupans = pickle.loads(received_pickle)
 print('[Checkpoint 06] Receiving data: ', received_pickle) # print out received tuple, after un-pickling
