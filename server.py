@@ -8,6 +8,7 @@ import pickle
 import hashlib
 import vlc
 import apikeys
+from time import sleep
 
 def read_out_text(text):
     text_to_speech = TextToSpeechV1(
@@ -27,9 +28,9 @@ def read_out_text(text):
     media = vlc_instance.media_new('text.mp3')
     player.set_media(media)
     player.play()
-    time.sleep(.5)
+    sleep(.5)
     duration = player.get_length() / 1000
-    time.sleep(duration)
+    sleep(duration)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #create a socket
 port = str(sys.argv[2]) #define the port on which you went to connect
@@ -45,7 +46,7 @@ while True:
     print("[Checkpoint 03] Accepted client connection from ",address," on port ",port)
     readIN= client.recv(1024)
     data = pickle.loads(readIN)
-    print ("[Checkpoint 04] Received data ",data)
+    print ("[Checkpoint 04] Received data ", data)
     checkSumQuestion = hashlib.md5(data[1])
     if checkSumQuestion != data[2]:
         client.send(b'checksum incorrect')

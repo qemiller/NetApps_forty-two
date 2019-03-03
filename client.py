@@ -31,9 +31,9 @@ def read_out_text(text):
     media = vlc_instance.media_new('text.mp3')
     player.set_media(media)
     player.play()
-    time.sleep(.5)
+    sleep(.5)
     duration = player.get_length() / 1000
-    time.sleep(duration)
+    sleep(duration)
 
 def decode(im):
     #This section taken from learnopencv.com 
