@@ -9,7 +9,7 @@ from picamera import PiCamera
 from time import sleep
 import hashlib
 import pickle
-import os
+import vlc
 from watson_developer_cloud import TextToSpeechV1
 import apikeys
 
@@ -18,14 +18,22 @@ def read_out_text(text):
         iam_apikey=apikeys.iam_apikey,
         url=apikeys.url
     )
-    with open('text.wav', 'wb') as audio_file:
+    with open('text.mp3', 'wb') as audio_file:
         audio_file.write(
             text_to_speech.synthesize(
                 text,
-                'audio/wav',
+                'audio/pm3',
                 'en-US_AllisonVoice'
             ).get_result().content)
-    os.system("start text.wav")  # only way i can get it to play the audio -caleb
+    sound = vlc.MediaPlayer('text.mp3')
+    vlc_instance = vlc.Instance()
+    player = vlc_instance.media_player_new()
+    media = vlc_instance.media_new('text.mp3')
+    player.set_media(media)
+    player.play()
+    time.sleep(.5)
+    duration = player.get_length() / 1000
+    time.sleep(duration)
 
 def decode(im):
     #This section taken from learnopencv.com 

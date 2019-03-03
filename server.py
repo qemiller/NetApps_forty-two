@@ -4,11 +4,9 @@ import wolframalpha   # pip install wolframalpha
 import sys
 from watson_developer_cloud import TextToSpeechV1
 from cryptography.fernet import Fernet #must 'pip install cryptography' to have this library
-#import pyaudio #pip3 install pyaudio (cannot get working on my windows machine at the moment)
-#import wave
 import pickle
 import hashlib
-import os
+import vlc
 import apikeys
 
 def read_out_text(text):
@@ -16,14 +14,22 @@ def read_out_text(text):
         iam_apikey=apikeys.iam_apikey,
         url=apikeys.url
     )
-    with open('text.wav', 'wb') as audio_file:
+    with open('text.mp3', 'wb') as audio_file:
         audio_file.write(
             text_to_speech.synthesize(
                 text,
-                'audio/wav',
+                'audio/mp3',
                 'en-US_AllisonVoice'
             ).get_result().content)
-    os.system("start text.wav")  # only way i can get it to play the audio -caleb
+    sound = vlc.MediaPlayer('text.mp3')
+    vlc_instance = vlc.Instance()
+    player = vlc_instance.media_player_new()
+    media = vlc_instance.media_new('text.mp3')
+    player.set_media(media)
+    player.play()
+    time.sleep(.5)
+    duration = player.get_length() / 1000
+    time.sleep(duration)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #create a socket
 port = str(sys.argv[2]) #define the port on which you went to connect
@@ -47,6 +53,7 @@ while True:
     question = f.decrypt(data[1])
     print("[Checkpoint 05] Decrypt: Key: ",data[0]," | Plain text: ",question)
     print("[Checkpoint 06] Speaking Question: ",question)
+    read_out_text(question)
 
     #wolframalpha	 
     print("[Checkpoint 07] Sending question to Wolframalpha: ",question)
