@@ -91,7 +91,10 @@ pickled_tup = pickle.dumps(tup)
 print('[Checkpoint 04] Encrypt: Generated Key: ', key.fernet_key," Cipher Text: ", cipher_text)
 print('[Checkpoint 05] Sending data ', tup) # print out the non-pickled version? makes more sense
 s.send(pickled_tup)
-received_pickle = s.recv(int(size))
+
+s.listen(5)
+recClient, recAdress = s.accept()
+received_pickle = recClient.recv(int(size))
 # de-pickle the payload
 tupans = pickle.loads(received_pickle)
 print('[Checkpoint 06] Receiving data: ', received_pickle) # print out received tuple, after un-pickling
@@ -109,4 +112,3 @@ print('[Checkpoint 08] Speaking Answer: ', answer_text)
 read_out_text(answer_text)
 
 s.close()   # might not want to close this here. Only close after client is done running.
-
