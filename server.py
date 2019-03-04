@@ -51,7 +51,9 @@ while True:
     if checkSumQuestion != data[2]:
         client.send(b'checksum incorrect')
     f = Fernet(data[0])
-    question = f.decrypt(data[1])
+    forwolfram = f.decrypt(data[1])
+    question = str(forwolfram)
+    #question = str(f.decrypt(data[1]))
     print("[Checkpoint 05] Decrypt: Key: ",data[0]," | Plain text: ",question)
     print("[Checkpoint 06] Speaking Question: ",question)
     read_out_text(question)
@@ -59,10 +61,10 @@ while True:
     #wolframalpha	 
     print("[Checkpoint 07] Sending question to Wolframalpha: ",question)
     wolf = wolframalpha.Client(apikeys.wolframID)
-    res = wolf.query(question)  #sent the question
+    res = wolf.query(bytes(forwolfram))  #sent the question
     ans = next(res.results).text  #get the anwer
     print("[Checkpoint 08] Received answer from Wolframalpha: ",ans)
-    encAns = f.encrypt(ans)
+    encAns = f.encrypt(str(ans))
     print("[Checkpoint 09] Encrypt: Key: ", data[1]," | Ciphertext: ", encAns)
     checkSumAns = hashlib.md5(encAns)
     print("[Checkpoint 10] Generated MD5 Checksum: ",checkSumAns)
