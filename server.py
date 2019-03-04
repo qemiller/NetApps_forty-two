@@ -64,12 +64,12 @@ while True:
     res = wolf.query(bytes(forwolfram))  #sent the question
     ans = next(res.results).text  #get the anwer
     print("[Checkpoint 08] Received answer from Wolframalpha: ",ans)
-    encAns = f.encrypt(str(ans))
+    encAns = f.encrypt(bytes(ans,'utf-8'))
     print("[Checkpoint 09] Encrypt: Key: ", data[1]," | Ciphertext: ", encAns)
     checkSumAns = hashlib.md5(encAns)
     print("[Checkpoint 10] Generated MD5 Checksum: ",checkSumAns)
     packet = (encAns, checkSumAns)
-    pickPacket = pickle.dump(packet)
+    pickPacket = pickle.dumps(packet)
     print("[Checkpoint 11] Sending answer: ",packet)
     client.send(pickPacket)
 
