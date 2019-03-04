@@ -92,20 +92,18 @@ print('[Checkpoint 04] Encrypt: Generated Key: ', key.fernet_key," Cipher Text: 
 print('[Checkpoint 05] Sending data ', tup) # print out the non-pickled version? makes more sense
 s.send(pickled_tup)
 
-s.listen(5)
-recClient, recAdress = s.accept()
-received_pickle = recClient.recv(int(size))
+received_pickle = s.recv(int(size))
 # de-pickle the payload
 tupans = pickle.loads(received_pickle)
 print('[Checkpoint 06] Receiving data: ', received_pickle) # print out received tuple, after un-pickling
 
 # check payload fidelity
-checkSum = hashlib.md5(tupans[0])
+checkSum = hashlib.md5(str(tupans[0]).encode('utf-8'))
 if checkSum != tupans[1]:
     print("checksum incorrect")
 
 # decrypt answer
-answer_text = cipher_suite.decrypt(tupans[0])
+answer_text = cipher_suite.decrypt(bytes(tupans[0],"utf-8"))
 print('[Checkpoint 07] Decrypt: Using Key: ', key.fernet_key, 'Plain text: ', answer_text)
 # read out answer
 print('[Checkpoint 08] Speaking Answer: ', answer_text)
