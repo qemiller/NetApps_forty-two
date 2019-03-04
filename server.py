@@ -32,11 +32,11 @@ def read_out_text(text):
     duration = player.get_length() / 1000
     sleep(duration)
 
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #create a socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #create a socket
 port = str(sys.argv[2]) #define the port on which you went to connect
 size = sys.argv[4]
 ip_address = socket.gethostbyname(socket.gethostname())
-s.bind((ip_address , port))
+s.bind(('' , int(port)))
 print("[Checkpoint 01]Created socket at ",ip_address," on port ",port)
 s.listen(1) #listening mode
 print("[Checkpoint 02] Listening for client connections")
