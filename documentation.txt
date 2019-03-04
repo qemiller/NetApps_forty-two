@@ -1,0 +1,28 @@
+FOR SOUND PLAYBACK:
+sudo apt-get install python-vlc
+import vlc
+sudo apt-get --purge --reinstall install pulseaudio #gets rid of errors when running the player. Sound worked either way!
+
+pip3 install --upgrade watson-developer-cloud
+
+
+CAMERA AND QR STUFF
+pip3 install pyzbar
+sudo pip3 install opencv-python #failed without 'sudo'
+sudo apt-get install libcblas-dev
+sudo apt-get install libhdf5-dev
+sudo apt-get install libhdf5-serial-dev
+sudo apt-get install libatlas-base-dev
+sudo apt-get install libjasper-dev 
+
+ENCRYPTION AND DECRYPTION
+pip3 install cyrptography
+sudo apt-get install libqtgui4 
+sudo apt-get install libqt4-test
+
+WOLFRAMALPHA STUFF
+pip3 install wolframalpha
+
+CLIENT USAGE: python3 client'py -ip [ip address] -p [port number] -s [size]
+
+SERVER USAGE: python3 server.py -p [port number] -s [size]
